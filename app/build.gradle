@@ -34,3 +34,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+// Add to the bottom of the file
+apply plugin: 'com.google.gms.google-services'
