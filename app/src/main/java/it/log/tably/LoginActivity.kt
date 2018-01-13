@@ -17,7 +17,7 @@ private const val RC_SIGN_IN = 123
 class LoginActivity : AppCompatActivity() {
 
 
-   private lateinit var mAuth: FirebaseAuth;
+   private lateinit var mAuth: FirebaseAuth
    private val providers = Arrays.asList(AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build())
 
 
@@ -66,8 +66,9 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun goToMainActivity() : Unit {
+    private fun goToMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+        finish()
     }
 }
