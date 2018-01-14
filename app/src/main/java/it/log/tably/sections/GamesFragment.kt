@@ -1,14 +1,21 @@
 package it.log.tably.sections
 
+import android.arch.lifecycle.GeneratedAdapter
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
 import it.log.tably.R
+import it.log.tably.sections.adapters.GamesAdapter
+import kotlinx.android.synthetic.main.fragment_games.*
+import kotlinx.android.synthetic.main.fragment_games.view.*
 
 /**
  * A simple [Fragment] subclass.
@@ -23,15 +30,35 @@ class GamesFragment : Fragment() {
     // TODO: Rename and change types of parameters
 
     private var mListener: OnFragmentInteractionListener? = null
+    private lateinit var mLayoutManager: RecyclerView.LayoutManager
+    private lateinit var mAdapter: Adapter<*>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        val view = inflater.inflate(R.layout.fragment_games, container, false)
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_games, container, false)
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        view.cards_containers.setHasFixedSize(true)
+
+        // use a linear layout manager
+        mLayoutManager = LinearLayoutManager(context)
+        view.cards_containers.cards_containers.layoutManager = mLayoutManager
+
+        // specify an adapter (see also next example)
+        mAdapter = GamesAdapter(null)
+        view.cards_containers.adapter = mAdapter
+        return view
     }
 
     // TODO: Rename method, update argument and hook method into UI event
