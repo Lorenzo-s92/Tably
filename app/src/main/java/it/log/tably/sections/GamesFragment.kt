@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.Adapter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,15 @@ import it.log.tably.R
 import it.log.tably.sections.adapters.GamesAdapter
 import kotlinx.android.synthetic.main.fragment_games.*
 import kotlinx.android.synthetic.main.fragment_games.view.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.ValueEventListener
+
+
+
+
 
 /**
  * A simple [Fragment] subclass.
@@ -32,31 +42,31 @@ class GamesFragment : Fragment() {
     private var mListener: OnFragmentInteractionListener? = null
     private lateinit var mLayoutManager: RecyclerView.LayoutManager
     private lateinit var mAdapter: Adapter<*>
+    private lateinit var mPlayersMap: Map<*, *>
+    private lateinit var mGamesMap: Map<*, *>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
-
 
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        val view = inflater.inflate(R.layout.fragment_games, container, false)
+
         // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.fragment_games, container, false)
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        view.cards_containers.setHasFixedSize(true)
+        //view.cards_containers.setHasFixedSize(true)
 
         // use a linear layout manager
         mLayoutManager = LinearLayoutManager(context)
         view.cards_containers.cards_containers.layoutManager = mLayoutManager
 
-        // specify an adapter (see also next example)
-        mAdapter = GamesAdapter(null)
+        // specify an adapter
+        mAdapter = GamesAdapter()
         view.cards_containers.adapter = mAdapter
         return view
     }

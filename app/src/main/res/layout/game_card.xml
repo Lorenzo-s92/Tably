@@ -34,7 +34,7 @@
                 app:layout_constraintVertical_bias="0.017" />
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/reporter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -94,7 +94,7 @@
                 card_view:layout_constraintGuide_percent="0.8" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/blue_attacker_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -106,7 +106,7 @@
                 card_view:layout_constraintTop_toBottomOf="@+id/blue_attacker" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/red_attacker_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -152,7 +152,7 @@
                 android:textColor="@color/green"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toBottomOf="@+id/textView2" />
+                card_view:layout_constraintTop_toBottomOf="@+id/blue_attacker_nickname" />
 
 
             <!--<LinearLayout-->
@@ -166,7 +166,7 @@
             <!--android:orientation="horizontal"-->
             <!--card_view:layout_constraintEnd_toEndOf="parent"-->
             <!--card_view:layout_constraintStart_toStartOf="parent"-->
-            <!--card_view:layout_constraintTop_toBottomOf="@+id/textView2">-->
+            <!--card_view:layout_constraintTop_toBottomOf="@+id/blue_attacker_nickname">-->
 
             <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/blue_defender"
@@ -212,7 +212,7 @@
                 card_view:layout_constraintTop_toTopOf="@+id/textView11" />
 
             <TextView
-                android:id="@+id/textView10"
+                android:id="@+id/red_defender_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -237,7 +237,7 @@
                 card_view:layout_constraintTop_toBottomOf="@+id/textView7" />
 
             <TextView
-                android:id="@+id/textView12"
+                android:id="@+id/blue_defender_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -249,17 +249,17 @@
                 card_view:layout_constraintTop_toBottomOf="@+id/blue_defender" />
 
             <TextView
-                android:id="@+id/textView15"
+                android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:text="14/12/1989 - 18:33"
-                card_view:layout_constraintBottom_toTopOf="@+id/textView"
+                card_view:layout_constraintBottom_toTopOf="@+id/reporter"
                 card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintTop_toBottomOf="@+id/textView" />
+                card_view:layout_constraintTop_toBottomOf="@+id/reporter" />
 
             <TextView
-                android:id="@+id/textView16"
+                android:id="@+id/score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -267,47 +267,11 @@
                 android:layout_marginTop="8dp"
                 android:text="6 - 3"
                 android:textColor="@color/green"
-                card_view:layout_constraintBottom_toTopOf="@+id/textView12"
+                card_view:layout_constraintBottom_toTopOf="@+id/blue_defender_nickname"
                 card_view:layout_constraintEnd_toStartOf="@+id/textView7"
                 card_view:layout_constraintStart_toEndOf="@+id/textView7"
                 card_view:layout_constraintTop_toBottomOf="@+id/textView11" />
 
-            <!--</LinearLayout>-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/textView2"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginEnd="8dp"-->
-            <!--android:layout_marginStart="8dp"-->
-            <!--android:text="VS"-->
-            <!--card_view:layout_constraintEnd_toEndOf="parent"-->
-            <!--card_view:layout_constraintStart_toStartOf="parent" />-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/textView3"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginEnd="8dp"-->
-            <!--android:layout_marginStart="8dp"-->
-            <!--android:text="14/12/1989 - 18:38"-->
-            <!--card_view:layout_constraintBottom_toBottomOf="parent"-->
-            <!--card_view:layout_constraintEnd_toEndOf="parent"-->
-            <!--card_view:layout_constraintHorizontal_bias="0.032"-->
-            <!--card_view:layout_constraintStart_toStartOf="parent" />-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/textView4"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="8dp"-->
-            <!--android:layout_marginEnd="8dp"-->
-            <!--android:layout_marginStart="8dp"-->
-            <!--android:layout_marginTop="8dp"-->
-            <!--android:text="6 - 1"-->
-            <!--card_view:layout_constraintBottom_toTopOf="@+id/textView3"-->
-            <!--card_view:layout_constraintEnd_toEndOf="parent"-->
-            <!--card_view:layout_constraintStart_toStartOf="parent"/>-->
 
 
         </android.support.constraint.ConstraintLayout>
