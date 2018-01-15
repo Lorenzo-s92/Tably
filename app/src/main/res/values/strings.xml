@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">tably</string>
+    <string name="title_games">Games</string>
+    <string name="title_match">Add match</string>
+    <string name="title_notifications">todo</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
