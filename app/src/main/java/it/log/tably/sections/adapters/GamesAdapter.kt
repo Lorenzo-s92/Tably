@@ -36,7 +36,11 @@ class GamesAdapter () : RecyclerView.Adapter<GamesAdapter.ViewHolder>() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 gamesMap = dataSnapshot.value as HashMap<String, HashMap<*, *>>
 
-                idsOfGames = gamesMap.keys.toTypedArray() as Array<String>
+                idsOfGames = gamesMap.keys.toTypedArray()
+
+                // Games are sorted by Firebase id (that seems to be incremental...)
+                idsOfGames.sortDescending()
+
                 Log.d(TAG, idsOfGames.size.toString())
                 notifyDataSetChanged()
             }
@@ -118,5 +122,5 @@ class GamesAdapter () : RecyclerView.Adapter<GamesAdapter.ViewHolder>() {
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount(): Int {
         return gamesMap.size
-}
+    }
 }
