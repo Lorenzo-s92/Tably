@@ -1,10 +1,13 @@
 package it.log.tably.sections.adapters
 
+import android.app.PendingIntent.getActivity
 import android.content.Context
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.firebase.database.*
@@ -12,6 +15,7 @@ import com.google.firebase.database.*
 import it.log.tably.R
 import it.log.tably.TablyApplication
 import it.log.tably.models.Game
+import it.log.tably.utils.Avatar
 import kotlinx.android.synthetic.main.game_card.view.*
 
 /**
@@ -76,6 +80,11 @@ class GamesAdapter () : RecyclerView.Adapter<GamesAdapter.ViewHolder>() {
         val redDefenderNicknameTV: TextView = mLL.red_defender_nickname
         val blueDefenderNicknameTV: TextView = mLL.blue_defender_nickname
         val scoreTV: TextView = mLL.score
+        val reporterIV : ImageView = mLL.reporter_avatar
+        val blueAttackerIV : ImageView = mLL.blue_attacker
+        val blueDefenderIV : ImageView = mLL.blue_defender
+        val redAttackerIV : ImageView = mLL.red_attacker
+        val redDefendeIV : ImageView = mLL.red_defender
     }
 
 
@@ -94,8 +103,6 @@ class GamesAdapter () : RecyclerView.Adapter<GamesAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        //  {nickname=m.mastropasqua, email=m.mastropasqua@reply.it, likes={-L1IbwsjjQPj537qhQD4=true, -L1FVy578joMTP3Fcmt7=true, -L1FoFN3PY9uuzPB1axc=true}}
-
 
         val game = gamesMap[idsOfGames[position]]
 
@@ -116,6 +123,23 @@ class GamesAdapter () : RecyclerView.Adapter<GamesAdapter.ViewHolder>() {
         holder.redDefenderNicknameTV.text = redDefense?.get("nickname").toString()
         holder.blueDefenderNicknameTV.text = bluDefense?.get("nickname").toString()
         holder.scoreTV.text = """${game?.get("bluScore").toString()} - ${game?.get("redScore").toString()}"""
+
+        var avatarId: Int
+
+        avatarId = Avatar.map.getValue(reporter?.get("nickname").toString())
+        holder.reporterIV.setImageDrawable(ContextCompat.getDrawable(holder.mLL.context, avatarId))
+
+        avatarId = Avatar.map.getValue(blueAttacker?.get("nickname").toString())
+        holder.blueAttackerIV.setImageDrawable(ContextCompat.getDrawable(holder.mLL.context, avatarId))
+
+        avatarId = Avatar.map.getValue(bluDefense?.get("nickname").toString())
+        holder.blueDefenderIV.setImageDrawable(ContextCompat.getDrawable(holder.mLL.context, avatarId))
+
+        avatarId = Avatar.map.getValue(redAttacker?.get("nickname").toString())
+        holder.redAttackerIV.setImageDrawable(ContextCompat.getDrawable(holder.mLL.context, avatarId))
+
+        avatarId = Avatar.map.getValue(redDefense?.get("nickname").toString())
+        holder.redDefendeIV.setImageDrawable(ContextCompat.getDrawable(holder.mLL.context, avatarId))
 
     }
 
