@@ -67,8 +67,14 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun goToMainActivity() {
+
+        // star to load DB from Firebase
+        TablyApplication.loadPlayersDB()
+
+        // Go to MainActivity
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
+
     }
 }
