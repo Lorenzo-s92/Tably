@@ -1,30 +1,27 @@
 package it.log.tably.sections
 
-import android.arch.lifecycle.GeneratedAdapter
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.Adapter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import it.log.tably.R
-import it.log.tably.sections.adapters.GamesAdapter
+import it.log.tably.models.FirebaseGame
+import it.log.tably.models.Game
+import it.log.tably.viewholders.GameViewHolder
 import kotlinx.android.synthetic.main.fragment_games.*
 import kotlinx.android.synthetic.main.fragment_games.view.*
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.ValueEventListener
-
-
-
 
 
 /**
@@ -41,14 +38,7 @@ class GamesFragment : Fragment() {
 
     private var mListener: OnFragmentInteractionListener? = null
     private lateinit var mLayoutManager: RecyclerView.LayoutManager
-    private lateinit var mAdapter: Adapter<*>
-    private lateinit var mPlayersMap: Map<*, *>
-    private lateinit var mGamesMap: Map<*, *>
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
+    private lateinit var mFirebaseRecyclerAdapter: FirebaseRecyclerAdapter<*,*>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -59,16 +49,57 @@ class GamesFragment : Fragment() {
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        //view.cards_containers.setHasFixedSize(true)
+        view.cards_containers.setHasFixedSize(true)
+
+        return view
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         // use a linear layout manager
         mLayoutManager = LinearLayoutManager(context)
-        view.cards_containers.cards_containers.layoutManager = mLayoutManager
+        (mLayoutManager as LinearLayoutManager).reverseLayout = true
+        (mLayoutManager as LinearLayoutManager).stackFromEnd = true
+
+
+        cards_containers.cards_containers.layoutManager = mLayoutManager
+
+        // Set up FirebaseRecyclerAdapter with the Query
+        val gamesQuery = FirebaseDatabase.getInstance().getReference("matches").orderByKey()
+
+        val options = FirebaseRecyclerOptions.Builder<FirebaseGame>()
+                .setQuery(gamesQuery, FirebaseGame::class.java)
+                .build()
 
         // specify an adapter
-        mAdapter = GamesAdapter()
-        view.cards_containers.adapter = mAdapter
-        return view
+        mFirebaseRecyclerAdapter = object : FirebaseRecyclerAdapter<FirebaseGame, GameViewHolder>(options) {
+
+            override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): GameViewHolder {
+                val layoutInflater = LayoutInflater.from(viewGroup.context)
+                return GameViewHolder(layoutInflater.inflate(R.layout.game_card, viewGroup, false))
+            }
+
+            override fun onBindViewHolder(holder: GameViewHolder?, position: Int, model: FirebaseGame?) {
+                val game = Game(model!!)
+                holder!!.bindToGame(game)
+            }
+
+        }
+
+        cards_containers.adapter = mFirebaseRecyclerAdapter
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mFirebaseRecyclerAdapter.startListening()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mFirebaseRecyclerAdapter.stopListening()
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -123,4 +154,4 @@ class GamesFragment : Fragment() {
             return fragment
         }
     }
-}// Required empty public constructor
+}
