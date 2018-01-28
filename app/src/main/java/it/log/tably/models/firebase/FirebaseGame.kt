@@ -11,12 +11,12 @@ class FirebaseGame {
     lateinit var redAttack: String
     lateinit var redDefense: String
     lateinit var bluDefense: String
-    var bluScore: Int = -1
-    var redScore: Int = -1
+    var bluScore: Long = -1
+    var redScore: Long = -1
     var likes: Int = -1
 
     constructor(posterId: String, date: String, bluAttack: String, redAttack: String,
-                redDefense: String, bluDefense: String, bluScore: Int, redScore: Int, likes: Int) {
+                redDefense: String, bluDefense: String, bluScore: Long, redScore: Long, likes: Int) {
 
         this.posterId = posterId
         this.date = date
