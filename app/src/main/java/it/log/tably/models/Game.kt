@@ -3,9 +3,10 @@ package it.log.tably.models
 import it.log.tably.database.Database
 
 class Game (var reporter: Player, var date: String, var blueAttacker: Player,  var redAttacker: Player,
-            var redDefender: Player, var blueDefender: Player, var blueScore: Int = -1, var redScore: Int = -1) {
+            var redDefender: Player, var blueDefender: Player, var blueScore: Int = -1,
+            var redScore: Int = -1, key: String) {
 
-    constructor (firebaseGame: FirebaseGame) : this(
+    constructor (firebaseGame: FirebaseGame, key: String) : this(
             Database.players.getValue(firebaseGame.posterId),
             firebaseGame.date,
             Database.players.getValue(firebaseGame.bluAttack),
@@ -13,8 +14,10 @@ class Game (var reporter: Player, var date: String, var blueAttacker: Player,  v
             Database.players.getValue(firebaseGame.redDefense),
             Database.players.getValue(firebaseGame.bluDefense),
             firebaseGame.bluScore,
-            firebaseGame.redScore
+            firebaseGame.redScore,
+            key
     )
+
 
     val score = """$blueScore - $redScore"""
 

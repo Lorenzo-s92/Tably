@@ -23,6 +23,7 @@ import it.log.tably.viewholders.GameViewHolder
 import kotlinx.android.synthetic.main.fragment_games.*
 import kotlinx.android.synthetic.main.fragment_games.view.*
 
+const val TAG  = "GamesFragment"
 
 /**
  * A simple [Fragment] subclass.
@@ -81,8 +82,13 @@ class GamesFragment : Fragment() {
             }
 
             override fun onBindViewHolder(holder: GameViewHolder?, position: Int, model: FirebaseGame?) {
-                val game = Game(model!!)
-                holder!!.bindToGame(game)
+                if (holder != null && model != null) {
+                    val game = Game(model, mFirebaseRecyclerAdapter.getRef(position).key)
+                    holder.bindToGame(game)
+                } else {
+                    Log.d(TAG, "Error during onBindViewHolder")
+                }
+
             }
 
         }
