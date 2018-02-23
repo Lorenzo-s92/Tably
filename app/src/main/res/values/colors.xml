@@ -7,4 +7,7 @@
     <color name="blueTeam">#0D47A1</color>
     <color name="redTeam">#D50000</color>
     <color name="green">#16a631</color>
+
+    <color name="white">#ffff</color>
+
 </resources>

@@ -4,11 +4,18 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
 import it.log.tably.R
+import it.log.tably.adapter.RankAdapter
+import it.log.tably.database.Database
+import it.log.tably.enums.RankingType
+import it.log.tably.models.PlayerStats
+import kotlinx.android.synthetic.main.fragment_ranking.view.*
+import kotlinx.android.synthetic.main.rankbar.view.*
 
 /**
  * A simple [Fragment] subclass.
@@ -23,6 +30,9 @@ class RankingFragment : Fragment() {
     // TODO: Rename and change types of parameters
 
     private var mListener: OnFragmentInteractionListener? = null
+    private lateinit var mLayoutManager: LinearLayoutManager
+    private lateinit var mAdapter: RankAdapter
+    var mRankingType = RankingType.SHAMES
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +40,190 @@ class RankingFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ranking, container, false)
+
+        val view = inflater.inflate(R.layout.fragment_ranking, container, false)
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        view.rank_container.setHasFixedSize(true)
+
+
+
+
+        // use a linear layout manager
+        mLayoutManager = LinearLayoutManager(context);
+        view.rank_container.layoutManager = mLayoutManager
+
+        var stats = Database.playerStats.values.toTypedArray()
+
+        var sorted = stats.sortedByDescending { it.shames }
+
+
+
+        mAdapter = RankAdapter(sorted, RankingType.SHAMES)
+        view.rank_container.adapter = mAdapter
+
+        val rankBarManager = RankBarManager(view, sorted, mAdapter)
+        rankBarManager.setRankingType(mRankingType)
+
+        view.ranking_bar.rankbar_name.text = "Shames"
+        view.ranking_bar.rankbar_name.setOnClickListener {
+            mAdapter.reverseDataset()
+        }
+
+//        mRecyclerView.setAdapter(mAdapter);
+//
+
+        return view
+    }
+
+     private class RankBarManager (val parentView: View, var dataSet: List<PlayerStats>, val adapter: RankAdapter) {
+
+        var sortViewsList: List<View> = listOf(
+                parentView.ranking_bar.ascending_order_score1,
+                parentView.ranking_bar.ascending_order_score2,
+                parentView.ranking_bar.ascending_order_score3,
+                parentView.ranking_bar.ascending_order_score4,
+                parentView.ranking_bar.descending_order_score1,
+                parentView.ranking_bar.descending_order_score2,
+                parentView.ranking_bar.descending_order_score3,
+                parentView.ranking_bar.descending_order_score4
+        )
+
+         var labelViewsList : List<View> = listOf(
+                 parentView.ranking_bar.score1,
+                 parentView.ranking_bar.score2,
+                 parentView.ranking_bar.score3,
+                 parentView.ranking_bar.score4
+         )
+
+         lateinit var currentRankingType: RankingType
+         var tapViewMap: HashMap<Int, Boolean> = HashMap()
+
+         /**
+          * Init
+          */
+        init {
+            hideAllSortViews()
+
+            for (v in labelViewsList)
+                tapViewMap[v.id] = false
+        }
+
+        fun setRankingType(aRankingType: RankingType) {
+            currentRankingType = aRankingType
+            hideAllSortViews()
+            initScoreLabelsForRankingType()
+            initClickListenersForRankingType()
+            initSortViewsForRankingType()
+
+        }
+
+
+        private fun hideAllSortViews() {
+            for (v in sortViewsList)
+                 v.visibility = View.INVISIBLE
+        }
+
+        private fun changeSortingView(vDescending: View, vAscending: View) {
+            if (vDescending.visibility == View.VISIBLE ) {
+                hideAllSortViews()
+                vDescending.visibility = View.INVISIBLE
+                vAscending.visibility = View.VISIBLE
+            } else {
+                hideAllSortViews()
+                vDescending.visibility = View.VISIBLE
+                vAscending.visibility = View.INVISIBLE
+            }
+
+        }
+
+
+         private fun initClickListenersForRankingType() {
+
+             when (currentRankingType) {
+                 RankingType.SHAMES -> {
+
+                     parentView.ranking_bar.score1.setOnClickListener {
+                         val vDescending = parentView.ranking_bar.descending_order_score1
+                         val vAscending= parentView.ranking_bar.ascending_order_score1
+                         val shouldSortAscending = vDescending.visibility == View.VISIBLE && vAscending.visibility == View.INVISIBLE
+
+                         dataSet = if (shouldSortAscending) dataSet.sortedBy { it.shames } else dataSet.sortedByDescending { it.shames }
+                         adapter.replaceDataSetWith(dataSet)
+
+                         changeSortingView(vDescending, vAscending)
+
+                     }
+
+                     parentView.ranking_bar.score2.setOnClickListener {
+                         val vDescending = parentView.ranking_bar.descending_order_score2
+                         val vAscending= parentView.ranking_bar.ascending_order_score2
+                         val shouldSortAscending = vDescending.visibility == View.VISIBLE && vAscending.visibility == View.INVISIBLE
+
+                         dataSet = if (shouldSortAscending) dataSet.sortedBy { it.getShamesAsPercentage() } else dataSet.sortedByDescending { it.getShamesAsPercentage() }
+                         adapter.replaceDataSetWith(dataSet)
+
+
+                         changeSortingView(vDescending, vAscending)
+
+                     }
+                     parentView.ranking_bar.score3.setOnClickListener {
+                         val vDescending = parentView.ranking_bar.descending_order_score3
+                         val vAscending= parentView.ranking_bar.ascending_order_score3
+                         val shouldSortAscending = vDescending.visibility == View.VISIBLE && vAscending.visibility == View.INVISIBLE
+
+                         dataSet = if (shouldSortAscending) dataSet.sortedBy { it.attackShames } else dataSet.sortedByDescending { it.attackShames }
+                         adapter.replaceDataSetWith(dataSet)
+
+                         changeSortingView(vDescending, vAscending)
+                     }
+
+                     parentView.ranking_bar.score4.setOnClickListener {
+                         val vDescending = parentView.ranking_bar.descending_order_score4
+                         val vAscending= parentView.ranking_bar.ascending_order_score4
+                         val shouldSortAscending = vDescending.visibility == View.VISIBLE && vAscending.visibility == View.INVISIBLE
+
+                         dataSet = if (shouldSortAscending) dataSet.sortedBy { it.defenseShames } else dataSet.sortedByDescending { it.defenseShames }
+                         adapter.replaceDataSetWith(dataSet)
+
+                         changeSortingView(vDescending, vAscending)
+                     }
+
+
+
+                 }
+
+             }
+
+         }
+
+        private fun initSortViewsForRankingType() {
+
+            when (currentRankingType) {
+
+                RankingType.SHAMES -> {
+                    parentView.ranking_bar.descending_order_score1.performClick()
+                }
+            }
+
+        }
+
+        private fun initScoreLabelsForRankingType() {
+            when (currentRankingType) {
+                RankingType.SHAMES -> {
+                    parentView.ranking_bar.score1.text = "Total"
+                    parentView.ranking_bar.score2.text = "%"
+                    parentView.ranking_bar.score3.text = "#A"
+                    parentView.ranking_bar.score4.text = "#D"
+                }
+            }
+         }
+
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
     }
 
     // TODO: Rename method, update argument and hook method into UI event

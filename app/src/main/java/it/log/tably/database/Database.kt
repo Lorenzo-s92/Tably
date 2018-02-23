@@ -8,6 +8,7 @@ class Database {
 
     companion object {
         var players = TablyApplication.playersMap.withDefault { Player.defaultPlayer() }
+        var playerStats = TablyApplication.playerStatsMap
     }
 
 }
