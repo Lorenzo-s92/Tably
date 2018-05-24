@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="12dp">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/tools"
+    android:background="#EEEEEE">
 
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
@@ -19,7 +17,7 @@
             android:layout_height="match_parent"
             android:padding="8dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView 
+            <de.hdodenhof.circleimageview.CircleImageView
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/reporter_avatar"
                 android:layout_width="59dp"
@@ -259,21 +257,48 @@
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintTop_toBottomOf="@+id/reporter" />
 
-            <TextView
-                android:id="@+id/score"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="6 - 3"
-                android:textColor="@color/green"
+                android:orientation="horizontal"
                 card_view:layout_constraintBottom_toTopOf="@+id/blue_defender_nickname"
                 card_view:layout_constraintEnd_toStartOf="@+id/textView7"
                 card_view:layout_constraintStart_toEndOf="@+id/textView7"
-                card_view:layout_constraintTop_toBottomOf="@+id/textView11" />
+                card_view:layout_constraintTop_toBottomOf="@+id/textView11">
 
+                <EditText
+                    android:id="@+id/score_blue_team"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="6"
+                    android:textColor="@color/green"
+                    />
 
+                <TextView
+                    android:id="@+id/dash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="-"
+                    android:textColor="@color/green"
+                    />
+
+                <EditText
+                    android:id="@+id/score_red_team"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="1"
+                    android:textColor="@color/green"
+                    />
+            </LinearLayout>
 
         </android.support.constraint.ConstraintLayout>
 
@@ -281,4 +306,4 @@
     </android.support.v7.widget.CardView>
 
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

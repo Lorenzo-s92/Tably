@@ -35,7 +35,7 @@ class RankAdapter(var orderedStats: List<PlayerStats>, var rankingType: RankingT
         val stat = orderedStats[position]
 
         holder.playerTV.text = stat.player.nickname
-        holder.playerAvatarIV.setImageResource(Avatar.map.getValue(stat.player.nickname))
+        holder.playerAvatarIV.setImageResource(Avatar.map.getValue(stat.player.emailAddress))
 
         holder.score1TV.text = getScore1(stat)
         holder.score2TV.text = getScore2(stat)
