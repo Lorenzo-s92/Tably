@@ -52,6 +52,16 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnFragmentInteractionLis
         return super.onCreateOptionsMenu(menu)
     }
 
+    override fun onBackPressed() {
+        lateinit var sectionFragment: Fragment
+        sectionFragment = GamesFragment.newInstance()
+
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.add(R.id.section, sectionFragment, sectionFragment.tag)
+        fragmentTransaction.commit()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem) : Boolean {
         lateinit var sectionFragment: Fragment
         when (item.itemId) {

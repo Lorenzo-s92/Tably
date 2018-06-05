@@ -3,6 +3,8 @@ package it.log.tably.sections
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import it.log.tably.MainActivity
 import it.log.tably.R
 import it.log.tably.TablyApplication
 import it.log.tably.TablyApplication.Companion.playersMap
@@ -31,10 +34,11 @@ class NewMatchFragment : Fragment() {
 
     val gamesReference = FirebaseDatabase.getInstance().getReference("matches")
 
-
+    private var playerKeyMap = HashMap<String, String>()
 
     private var isPlayerSelected = false
     private var selectedPlayerNickname : String = ""
+    private var selectedPlayerKey : String = ""
     private var selectedPlayerImageUrl : String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -54,12 +58,21 @@ class NewMatchFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val currentUserEmail : String = FirebaseAuth.getInstance().currentUser!!.email!!
-        var currentUserId : String = ""
-        var currentUserImageUrl : String = ""
+        val reporterEmail : String = FirebaseAuth.getInstance().currentUser!!.email!!
+        var reporterName : String = ""
+        var reporterImageUrl : String = ""
+
+        var reporterKey : String = ""
+        var blueAttackerKey : String = ""
+        var blueDefenderKey : String = ""
+        var redAttackerKey : String = ""
+        var redDefenderKey : String = ""
+
+        var addMatchEnableCounter = 0
+
+        confirm_add_match.isEnabled = false
 
         for (player in TablyApplication.playersMap) {
-            playerKeyMap.put(player.value.emailAddress, player.key)
             var playerLinearLayout = LinearLayout(activity)
             playerLinearLayout.orientation = LinearLayout.VERTICAL
             var imageView = ImageView(activity)
@@ -81,49 +94,83 @@ class NewMatchFragment : Fragment() {
             playerLinearLayout.setPadding(10, 10, 10, 10)
             playerLinearLayout.setOnClickListener{
                 selectedPlayerNickname = text.text.toString()
+                selectedPlayerKey = player.key
                 selectedPlayerImageUrl = player.value.imageUrl
                 isPlayerSelected = true
                 Toast.makeText(activity, "Selected: " + selectedPlayerNickname, Toast.LENGTH_SHORT).show()
             }
             this.players_linear.addView(playerLinearLayout)
 
-            if (player.value.emailAddress == currentUserEmail) {
-                currentUserId = player.value.nickname
-                currentUserImageUrl = player.value.imageUrl
+            if (player.value.emailAddress == reporterEmail) {
+                reporterName = player.value.nickname
+                reporterKey = player.key
+                reporterImageUrl = player.value.imageUrl
             }
         }
 
-        reporter.text = currentUserId
-        setPlayerImage(currentUserImageUrl, reporter_avatar)
+        reporter.text = reporterName
+        setPlayerImage(reporterImageUrl, reporter_avatar)
 
         blue_attacker.setOnClickListener{
             if (isPlayerSelected) {
                 blue_attacker_nickname.text = selectedPlayerNickname
                 setPlayerImage(selectedPlayerImageUrl, blue_attacker)
+                blueAttackerKey = selectedPlayerKey
                 isPlayerSelected = false
+
+                if(++addMatchEnableCounter == 6) confirm_add_match.isEnabled = true
             }
         }
         blue_defender.setOnClickListener{
             if (isPlayerSelected) {
                 blue_defender_nickname.text = selectedPlayerNickname
                 setPlayerImage(selectedPlayerImageUrl, blue_defender)
+                blueDefenderKey = selectedPlayerKey
                 isPlayerSelected = false
+
+                if(++addMatchEnableCounter == 6) confirm_add_match.isEnabled = true
             }
         }
         red_attacker.setOnClickListener{
             if (isPlayerSelected) {
                 red_attacker_nickname.text = selectedPlayerNickname
                 setPlayerImage(selectedPlayerImageUrl, red_attacker)
+                redAttackerKey = selectedPlayerKey
                 isPlayerSelected = false
+
+                if(++addMatchEnableCounter == 6) confirm_add_match.isEnabled = true
             }
         }
         red_defender.setOnClickListener{
             if (isPlayerSelected) {
                 red_defender_nickname.text = selectedPlayerNickname
                 setPlayerImage(selectedPlayerImageUrl, red_defender)
+                redDefenderKey = selectedPlayerKey
                 isPlayerSelected = false
+
+                if(++addMatchEnableCounter == 6) confirm_add_match.isEnabled = true
             }
         }
+
+        score_blue_team.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun afterTextChanged(p0: Editable?) {
+                if(++addMatchEnableCounter == 6) confirm_add_match.isEnabled = true
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+
+        score_red_team.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun afterTextChanged(p0: Editable?) {
+                if(++addMatchEnableCounter == 6) confirm_add_match.isEnabled = true
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
 
         confirm_add_match.setOnClickListener{
             val now = Date()
@@ -134,18 +181,25 @@ class NewMatchFragment : Fragment() {
             val dateAndTime = date + " - " + hour
 
             var newMatch = FirebaseGame(
-                    posterId = playerKeyMap[reporter.text!!].toString(),
+            //        posterId = playerKeyMap[reporter.text!!].toString(),
+                    posterId = reporterKey,
                     date = dateAndTime,
-                    bluAttack =  playerKeyMap[blue_attacker_nickname.text].toString(),
-                    redAttack =  playerKeyMap[red_attacker_nickname.text].toString(),
-                    redDefense = playerKeyMap[red_defender_nickname.text].toString(),
-                    bluDefense = playerKeyMap[blue_defender_nickname.text].toString(),
+                    bluAttack =  blueAttackerKey,
+                    redAttack =  redAttackerKey,
+                    redDefense = redDefenderKey,
+                    bluDefense = blueDefenderKey,
                     bluScore = score_blue_team.text.toString().toLong(),
                     redScore = score_red_team.text.toString().toLong(),
                     likes = 0)
 
             var newPost = gamesReference.push()
             newPost.setValue(newMatch)
+
+            (context as MainActivity).onBackPressed()
+        }
+
+        cancel_add_match.setOnClickListener{
+            (context as MainActivity).onBackPressed()
         }
     }
 
@@ -165,8 +219,6 @@ class NewMatchFragment : Fragment() {
             fragment.arguments = args
             return fragment
         }
-
-        var playerKeyMap = HashMap<String, String>()
     }
 
     private fun setPlayerImage(imageUrl: String, imageView: ImageView) {
