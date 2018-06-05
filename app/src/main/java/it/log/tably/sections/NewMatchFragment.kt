@@ -3,21 +3,24 @@ package it.log.tably.sections
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import it.log.tably.R
 import it.log.tably.TablyApplication
+import it.log.tably.TablyApplication.Companion.playersMap
 import it.log.tably.models.FirebaseGame
 import it.log.tably.models.Game
 import kotlinx.android.synthetic.main.fragment_games.view.*
 import kotlinx.android.synthetic.main.fragment_new_match.*
+import kotlinx.android.synthetic.main.rankbar.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,10 +31,11 @@ class NewMatchFragment : Fragment() {
 
     val gamesReference = FirebaseDatabase.getInstance().getReference("matches")
 
-    private var playerKeyMap = HashMap<String, String>()
+
 
     private var isPlayerSelected = false
-    private var selectedPlayer = String()
+    private var selectedPlayerNickname : String = ""
+    private var selectedPlayerImageUrl : String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -50,46 +54,75 @@ class NewMatchFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-//        val scoreBlueTeam = score_blue_team.text
-//        val scoreRedTeam = score_red_team.text
+        val currentUserEmail : String = FirebaseAuth.getInstance().currentUser!!.email!!
+        var currentUserId : String = ""
+        var currentUserImageUrl : String = ""
 
         for (player in TablyApplication.playersMap) {
-            playerKeyMap.put(player.value.nickname, player.key)
+            playerKeyMap.put(player.value.emailAddress, player.key)
+            var playerLinearLayout = LinearLayout(activity)
+            playerLinearLayout.orientation = LinearLayout.VERTICAL
+            var imageView = ImageView(activity)
+        //    imageView.layoutParams.height = 20
+         //   setPlayerImage(player.value.imageUrl, imageView)
+            val cropOptions = RequestOptions().centerCrop().placeholder(R.drawable.empty_player)
+                    .circleCrop().sizeMultiplier(0.15f)
+            Glide.with(context!!)
+                    .load(player.value.imageUrl)
+                    .apply(cropOptions)
+                    .into(imageView)
+
             var text = TextView(activity)
+            text.gravity = Gravity.CENTER
             text.setText(player.value.nickname)
-            text.setPadding(10, 10, 10, 10)
-            text.setOnClickListener {
-                selectedPlayer = text.text.toString()
+
+            playerLinearLayout.addView(imageView)
+            playerLinearLayout.addView(text)
+            playerLinearLayout.setPadding(10, 10, 10, 10)
+            playerLinearLayout.setOnClickListener{
+                selectedPlayerNickname = text.text.toString()
+                selectedPlayerImageUrl = player.value.imageUrl
                 isPlayerSelected = true
-                Toast.makeText(activity, "Selected: " + selectedPlayer, Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Selected: " + selectedPlayerNickname, Toast.LENGTH_SHORT).show()
             }
-            this.players_linear.addView(text)
+            this.players_linear.addView(playerLinearLayout)
+
+            if (player.value.emailAddress == currentUserEmail) {
+                currentUserId = player.value.nickname
+                currentUserImageUrl = player.value.imageUrl
+            }
         }
 
-        reporter_avatar.setOnClickListener{
-            if (isPlayerSelected)
-            reporter.text = selectedPlayer
-            isPlayerSelected = false
-        }
+        reporter.text = currentUserId
+        setPlayerImage(currentUserImageUrl, reporter_avatar)
+
         blue_attacker.setOnClickListener{
-            if (isPlayerSelected)
-                blue_attacker_nickname.text = selectedPlayer
-            isPlayerSelected = false
+            if (isPlayerSelected) {
+                blue_attacker_nickname.text = selectedPlayerNickname
+                setPlayerImage(selectedPlayerImageUrl, blue_attacker)
+                isPlayerSelected = false
+            }
         }
         blue_defender.setOnClickListener{
-            if (isPlayerSelected)
-                blue_defender_nickname.text = selectedPlayer
-            isPlayerSelected = false
+            if (isPlayerSelected) {
+                blue_defender_nickname.text = selectedPlayerNickname
+                setPlayerImage(selectedPlayerImageUrl, blue_defender)
+                isPlayerSelected = false
+            }
         }
         red_attacker.setOnClickListener{
-            if (isPlayerSelected)
-                red_attacker_nickname.text = selectedPlayer
-            isPlayerSelected = false
+            if (isPlayerSelected) {
+                red_attacker_nickname.text = selectedPlayerNickname
+                setPlayerImage(selectedPlayerImageUrl, red_attacker)
+                isPlayerSelected = false
+            }
         }
         red_defender.setOnClickListener{
-            if (isPlayerSelected)
-                red_defender_nickname.text = selectedPlayer
-            isPlayerSelected = false
+            if (isPlayerSelected) {
+                red_defender_nickname.text = selectedPlayerNickname
+                setPlayerImage(selectedPlayerImageUrl, red_defender)
+                isPlayerSelected = false
+            }
         }
 
         confirm_add_match.setOnClickListener{
@@ -101,7 +134,7 @@ class NewMatchFragment : Fragment() {
             val dateAndTime = date + " - " + hour
 
             var newMatch = FirebaseGame(
-                    posterId = playerKeyMap[reporter.text].toString(),
+                    posterId = playerKeyMap[reporter.text!!].toString(),
                     date = dateAndTime,
                     bluAttack =  playerKeyMap[blue_attacker_nickname.text].toString(),
                     redAttack =  playerKeyMap[red_attacker_nickname.text].toString(),
@@ -132,5 +165,17 @@ class NewMatchFragment : Fragment() {
             fragment.arguments = args
             return fragment
         }
+
+        var playerKeyMap = HashMap<String, String>()
+    }
+
+    private fun setPlayerImage(imageUrl: String, imageView: ImageView) {
+        val cropOptions = RequestOptions().centerCrop()
+                .circleCrop().placeholder(R.drawable.empty_player)
+
+        Glide.with(context!!)
+                .load(imageUrl)
+                .apply(cropOptions)
+                .into(imageView)
     }
 }

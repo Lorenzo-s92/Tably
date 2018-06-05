@@ -6,6 +6,7 @@ buildscript {
     ext.supportLibraryVersion = '27.0.2'
 
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }

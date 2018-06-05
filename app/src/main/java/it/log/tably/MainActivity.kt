@@ -81,7 +81,5 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnFragmentInteractionLis
 
         // Set default section
         navigation.selectedItemId = R.id.navigation_games
-
-
     }
 }

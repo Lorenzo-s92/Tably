@@ -22,6 +22,17 @@ import it.log.tably.models.Game
 import it.log.tably.viewholders.GameViewHolder
 import kotlinx.android.synthetic.main.fragment_games.*
 import kotlinx.android.synthetic.main.fragment_games.view.*
+import android.support.annotation.NonNull
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import java.nio.file.Files.delete
+import android.support.v7.widget.helper.ItemTouchHelper
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import it.log.tably.TablyApplication
+import it.log.tably.TablyApplication.Companion.playersMap
+import it.log.tably.utils.StatsFactory
+
 
 const val TAG  = "GamesFragment"
 
@@ -95,7 +106,53 @@ class GamesFragment : Fragment() {
 
         cards_containers.adapter = mFirebaseRecyclerAdapter
 
+
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+                val selectedMatch = FirebaseDatabase.getInstance().getReference("matches")
+                        .child(mFirebaseRecyclerAdapter.getRef(viewHolder.layoutPosition).key)
+
+                selectedMatch.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val match = dataSnapshot.value as HashMap<*, HashMap<*, *>>
+
+                        Toast.makeText(TablyApplication.applicationContext(), "Game to be removed!", Toast.LENGTH_LONG).show()
+
+//                        if (match.values.["posterId"] ==
+//                                NewMatchFragment.playerKeyMap.getValue(FirebaseAuth.getInstance().currentUser!!.email!!)) {
+//                            Toast.makeText(TablyApplication.applicationContext(), "Game to be removed!", Toast.LENGTH_LONG).show()
+//                        }
+                        
+                        //    val game = Game(map)
+//                            if (game.reporter.emailAddress == FirebaseAuth.getInstance().currentUser!!.email!!) {
+//                                selectedMatch.setValue(null)
+//                            }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        // Failed to read value
+                        Log.d(it.log.tably.TAG, "Failed to read value.", error.toException())
+                    }
+                })
+
+//                if (selectedMatch.child("posterId").child("email")..toString() == FirebaseAuth.getInstance().currentUser!!.email!!) {
+//                    selectedMatch.setValue(null)
+//                }
+
+                mFirebaseRecyclerAdapter.notifyDataSetChanged()
+            }
+        }).attachToRecyclerView(cards_containers)
+
     }
+
+
+
+
 
     override fun onStart() {
         super.onStart()
