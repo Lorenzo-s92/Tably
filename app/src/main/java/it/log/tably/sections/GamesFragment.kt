@@ -1,6 +1,7 @@
 package it.log.tably.sections
 
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -27,6 +28,7 @@ import it.log.tably.viewholders.GameViewHolder
 import kotlinx.android.synthetic.main.fragment_games.*
 import kotlinx.android.synthetic.main.fragment_games.view.*
 import android.support.annotation.NonNull
+import android.support.v7.app.AlertDialog
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import java.nio.file.Files.delete
@@ -113,41 +115,41 @@ class GamesFragment : Fragment() {
         cards_containers.adapter = mFirebaseRecyclerAdapter
 
 
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        ItemTouchHelper(object : ItemTouchHelper.Callback() {
+
+            override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
+                val selectedMatch = FirebaseDatabase.getInstance().getReference("matches")
+                        .child(mFirebaseRecyclerAdapter.getRef(viewHolder!!.layoutPosition).key)
+
+                val reporterId = (viewHolder as GameViewHolder).getReporterId()
+                if (playersMap.getValue(reporterId).emailAddress == FirebaseAuth.getInstance().currentUser!!.email!!) {
+                    return makeMovementFlags(0, ItemTouchHelper.LEFT) // ItemTouchHelper.LEFT
+                } else return 0
+            }
+
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 return false
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
                 val selectedMatch = FirebaseDatabase.getInstance().getReference("matches")
                         .child(mFirebaseRecyclerAdapter.getRef(viewHolder.layoutPosition).key)
-                var swipeCompleted = false
 
-                selectedMatch.addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (!swipeCompleted) {
-                            var posterIdKey = ((dataSnapshot.value) as HashMap<*, *>).get("posterId") as String
 
-                            if (playersMap.getValue(posterIdKey).emailAddress == FirebaseAuth.getInstance().currentUser!!.email!!) {
-                                swipeCompleted = true
-                                selectedMatch.setValue(null)
-                            }
-                        }
-                    }
+                AlertDialog.Builder(context!!)
+                        .setTitle("Cancel match?")
+                        .setNegativeButton(android.R.string.no, null)
+                        .setPositiveButton(android.R.string.yes, DialogInterface.OnClickListener { dialog, whichButton ->
+                                selectedMatch.setValue(null) })
+                        .show()
 
-                    override fun onCancelled(error: DatabaseError) {
-                        // Failed to read value
-                        Log.d(it.log.tably.TAG, "Failed to read value.", error.toException())
-                    }
-                })
 
                 mFirebaseRecyclerAdapter.notifyDataSetChanged()
             }
         }).attachToRecyclerView(cards_containers)
 
     }
-
-
 
     override fun onStart() {
         super.onStart()

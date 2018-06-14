@@ -29,6 +29,7 @@ class GameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val redAttackerIV : ImageView = itemView.red_attacker
     private val redDefenderIV : ImageView = itemView.red_defender
 
+    private var reporterId : String = ""
 
     fun bindToGame(game: Game) {
         reporterTV.text = game.reporter.nickname
@@ -40,11 +41,17 @@ class GameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         scoreTV.text = game.score
 
+        reporterId = game.reporter.id
+
         setPlayerImage(game.reporter.imageUrl, reporterIV )
         setPlayerImage(game.blueAttacker.imageUrl, blueAttackerIV )
         setPlayerImage(game.blueDefender.imageUrl, blueDefenderIV )
         setPlayerImage(game.redAttacker.imageUrl, redAttackerIV )
         setPlayerImage(game.redDefender.imageUrl, redDefenderIV )
+    }
+
+    fun getReporterId() : String {
+        return reporterId
     }
 
     private fun getDrawable(id: Int) : Drawable? {

@@ -14,7 +14,6 @@ class PlayerStats (val player: Player) {
     var matches = 0
     var madeShames = 0
 
-
     // Number of shames when *player* was a defender
     var defenseShames = 0
 
@@ -52,8 +51,11 @@ class PlayerStats (val player: Player) {
         return (shames.toFloat() * 100.toFloat() / matches.toFloat()).roundToInt()
     }
 
+    fun getVictoriesAsPercentage(): Int {
+        return ((victories.toFloat() * 100.toFloat()) / matches.toFloat()).roundToInt()
+    }
 
-
-
-
+    fun getDefeatsAsPercentage(): Int {
+        return ((defeats.toFloat() * 100.toFloat()) / matches.toFloat()).roundToInt()
+    }
 }
