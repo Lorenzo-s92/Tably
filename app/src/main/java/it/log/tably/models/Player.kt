@@ -1,6 +1,5 @@
 package it.log.tably.models
 
-import it.log.tably.utils.Avatar
 import java.util.HashMap
 
 
@@ -29,7 +28,5 @@ class Player (val id: String, val nickname: String, val emailAddress: String,
             map.value["imageUrl"] as String,
             if (map.value["likes"] is HashMap<*, *>) map.value["likes"] as HashMap<String, Boolean> else HashMap<String, Boolean>()
     )
-
-    val avatarAsId = Avatar.map.getValue(nickname)
 
 }
