@@ -81,9 +81,9 @@ class GamesFragment : Fragment() {
                 return GameViewHolder(layoutInflater.inflate(R.layout.game_card, viewGroup, false))
             }
 
-            override fun onBindViewHolder(holder: GameViewHolder?, position: Int, model: FirebaseGame?) {
+            override fun onBindViewHolder(holder: GameViewHolder, position: Int, model: FirebaseGame) {
                 if (holder != null && model != null) {
-                    val game = Game(model, mFirebaseRecyclerAdapter.getRef(position).key)
+                    val game = Game(model, mFirebaseRecyclerAdapter.getRef(position).key!!)
                     holder.bindToGame(game)
                 } else {
                     Log.d(TAG, "Error during onBindViewHolder")

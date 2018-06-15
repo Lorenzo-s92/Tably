@@ -8,7 +8,6 @@ import java.util.*
 import kotlinx.android.synthetic.main.activity_login.*
 import com.google.firebase.auth.FirebaseAuth
 import android.widget.Toast
-import com.firebase.ui.auth.ResultCodes.*
 
 
 private const val RC_SIGN_IN = 123
@@ -18,7 +17,7 @@ class LoginActivity : AppCompatActivity() {
 
 
    private lateinit var mAuth: FirebaseAuth
-   private val providers = Arrays.asList(AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build())
+   private val providers = Arrays.asList(AuthUI.IdpConfig.EmailBuilder().build())
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -26,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
 
         if (requestCode == RC_SIGN_IN) {
             // val response = IdpResponse.fromResultIntent(data)
-            if (resultCode == OK) {
+            if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 goToMainActivity()
             } else {
@@ -44,14 +43,14 @@ class LoginActivity : AppCompatActivity() {
 
         mAuth = FirebaseAuth.getInstance()
 
-        signIn.setOnClickListener({
+        signIn.setOnClickListener {
             startActivityForResult(
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
                             .setAvailableProviders(providers)
                             .build(),
                     RC_SIGN_IN)
-        })
+        }
 
     }
 
