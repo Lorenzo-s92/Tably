@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import it.log.tably.R
 import it.log.tably.models.PlayerStats
 import it.log.tably.enums.RankingType
-import it.log.tably.utils.Avatar
 import kotlinx.android.synthetic.main.rank_card.view.*
+import kotlin.math.roundToInt
 
 
 class RankAdapter(var orderedStats: List<PlayerStats>, var rankingType: RankingType) : RecyclerView.Adapter<RankAdapter.ViewHolder>() {
@@ -35,7 +37,11 @@ class RankAdapter(var orderedStats: List<PlayerStats>, var rankingType: RankingT
         val stat = orderedStats[position]
 
         holder.playerTV.text = stat.player.nickname
-        holder.playerAvatarIV.setImageResource(Avatar.map.getValue(stat.player.nickname))
+        val cropOptions = RequestOptions().centerCrop().placeholder(R.drawable.empty_player)
+        Glide.with(holder.itemView)
+                .load(stat.player.imageUrl)
+                .apply(cropOptions)
+                .into(holder.playerAvatarIV)
 
         holder.score1TV.text = getScore1(stat)
         holder.score2TV.text = getScore2(stat)
@@ -55,7 +61,7 @@ class RankAdapter(var orderedStats: List<PlayerStats>, var rankingType: RankingT
     }
 
     private fun toPercentage(aValue: String) : String {
-        return "~$aValue%"
+        return "$aValue"
     }
 
     private fun getScore1(playerStats: PlayerStats): String? {
@@ -64,6 +70,15 @@ class RankAdapter(var orderedStats: List<PlayerStats>, var rankingType: RankingT
         when (rankingType) {
             RankingType.SHAMES -> {
                 score = playerStats.shames.toString()
+            }
+            RankingType.STANDINGS -> {
+                score = playerStats.victories.toString()
+            }
+            RankingType.STREAKS -> {
+                score = playerStats.defeats.toString()
+            }
+            else -> {
+                score = "-"
             }
         }
 
@@ -77,6 +92,15 @@ class RankAdapter(var orderedStats: List<PlayerStats>, var rankingType: RankingT
             RankingType.SHAMES -> {
                 score = playerStats.getShamesAsPercentage().toString()
             }
+            RankingType.STANDINGS -> {
+                score = playerStats.getVictoriesAsPercentage().toString()
+            }
+            RankingType.STREAKS -> {
+                score = playerStats.getDefeatsAsPercentage().toString()
+            }
+            else -> {
+                score = "-"
+            }
         }
         return toPercentage(score)
     }
@@ -88,6 +112,9 @@ class RankAdapter(var orderedStats: List<PlayerStats>, var rankingType: RankingT
             RankingType.SHAMES -> {
                 score = playerStats.attackShames.toString()
             }
+            else -> {
+                score = "-"
+            }
         }
         return score
     }
@@ -98,6 +125,9 @@ class RankAdapter(var orderedStats: List<PlayerStats>, var rankingType: RankingT
         when (rankingType) {
             RankingType.SHAMES -> {
                 score = playerStats.defenseShames.toString()
+            }
+            else -> {
+                score = "-"
             }
         }
         return score

@@ -8,6 +8,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Toast
 
 import it.log.tably.R
 import it.log.tably.adapter.RankAdapter
@@ -56,20 +59,59 @@ class RankingFragment : Fragment() {
 
         var stats = Database.playerStats.values.toTypedArray()
 
-        var sorted = stats.sortedByDescending { it.shames }
+        var sorted : List<PlayerStats>
 
 
 
-        mAdapter = RankAdapter(sorted, RankingType.SHAMES)
+//        mAdapter = RankAdapter(sorted, RankingType.SHAMES)
+//        view.rank_container.adapter = mAdapter
+//
+//        val rankBarManager = RankBarManager(view, sorted, mAdapter)
+//        rankBarManager.setRankingType(mRankingType)
+
+        var rankingTypes = arrayOf("Standings", "Streaks", "Shames")
+
+        sorted = stats.sortedByDescending { it.getVictoriesAsPercentage() }
+        view.ranking_bar.rankbar_name.text = "Standings"
+        mAdapter = RankAdapter(sorted, RankingType.STANDINGS)
         view.rank_container.adapter = mAdapter
 
         val rankBarManager = RankBarManager(view, sorted, mAdapter)
         rankBarManager.setRankingType(mRankingType)
 
-        view.ranking_bar.rankbar_name.text = "Shames"
+        var i : Int = 0
+
         view.ranking_bar.rankbar_name.setOnClickListener {
-            mAdapter.reverseDataset()
+        //    mAdapter.reverseDataset()
+
+            i = (i + 1) % 3
+
+            if (i == 0) { sorted = stats.sortedByDescending { it.getVictoriesAsPercentage() } }
+            else if (i == 1) { sorted = stats.sortedByDescending { it.getDefeatsAsPercentage() } }
+            else if (i == 2) { sorted = stats.sortedByDescending { it.shames } }
+
+            view.ranking_bar.rankbar_name.text = rankingTypes[i]
+            mAdapter = RankAdapter(sorted, RankingType.values()[i])
+            view.rank_container.adapter = mAdapter
+
+            val rankBarManager = RankBarManager(view, sorted, mAdapter)
+            rankBarManager.setRankingType(mRankingType)
         }
+
+//        val adapter = ArrayAdapter.createFromResource(activity,
+//                R.array.score_array, android.R.layout.simple_spinner_item)
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        rankbar_spinner!!.setAdapter(adapter)
+//
+//        rankbar_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+//
+//                Toast.makeText(activity, "You have Selected " + rankbar_spinner.selectedItem.toString(), Toast.LENGTH_SHORT).show()
+//            }
+//
+//            override fun onNothingSelected(parent: AdapterView<*>) {
+//            }
+//        }
 
 //        mRecyclerView.setAdapter(mAdapter);
 //

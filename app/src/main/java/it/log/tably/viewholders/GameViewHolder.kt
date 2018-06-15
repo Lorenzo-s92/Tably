@@ -6,8 +6,12 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
+import it.log.tably.R
 import it.log.tably.models.Game
 import kotlinx.android.synthetic.main.game_card.view.*
+import com.bumptech.glide.request.RequestOptions
+import it.log.tably.models.Player
 
 
 class GameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -25,6 +29,7 @@ class GameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val redAttackerIV : ImageView = itemView.red_attacker
     private val redDefenderIV : ImageView = itemView.red_defender
 
+    private var reporterId : String = ""
 
     fun bindToGame(game: Game) {
         reporterTV.text = game.reporter.nickname
@@ -36,14 +41,29 @@ class GameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         scoreTV.text = game.score
 
-        reporterIV.setImageDrawable(getDrawable(game.reporter.avatarAsId))
-        blueAttackerIV.setImageDrawable(getDrawable(game.blueAttacker.avatarAsId))
-        blueDefenderIV.setImageDrawable(getDrawable(game.blueDefender.avatarAsId))
-        redAttackerIV.setImageDrawable(getDrawable(game.redAttacker.avatarAsId))
-        redDefenderIV.setImageDrawable(getDrawable(game.redDefender.avatarAsId))
+        reporterId = game.reporter.id
+
+        setPlayerImage(game.reporter.imageUrl, reporterIV )
+        setPlayerImage(game.blueAttacker.imageUrl, blueAttackerIV )
+        setPlayerImage(game.blueDefender.imageUrl, blueDefenderIV )
+        setPlayerImage(game.redAttacker.imageUrl, redAttackerIV )
+        setPlayerImage(game.redDefender.imageUrl, redDefenderIV )
+    }
+
+    fun getReporterId() : String {
+        return reporterId
     }
 
     private fun getDrawable(id: Int) : Drawable? {
         return ContextCompat.getDrawable(this.itemView.context, id)
+    }
+
+    private fun setPlayerImage(imageUrl: String, imageView: ImageView) {
+        val cropOptions = RequestOptions().centerCrop().placeholder(R.drawable.empty_player)
+
+        Glide.with(itemView)
+                .load(imageUrl)
+                .apply(cropOptions)
+                .into(imageView)
     }
 }

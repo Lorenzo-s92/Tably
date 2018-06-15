@@ -4,9 +4,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
+import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import it.log.tably.sections.GamesFragment
+import it.log.tably.sections.NewMatchFragment
 import it.log.tably.sections.RankingFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -43,6 +47,42 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnFragmentInteractionLis
         return@OnNavigationItemSelectedListener true
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.app_bar, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onBackPressed() {
+        lateinit var sectionFragment: Fragment
+        sectionFragment = GamesFragment.newInstance()
+
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.add(R.id.section, sectionFragment, sectionFragment.tag)
+        fragmentTransaction.commit()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) : Boolean {
+        lateinit var sectionFragment: Fragment
+        when (item.itemId) {
+            R.id.menu_add_match -> {
+                    sectionFragment = NewMatchFragment.newInstance()
+            }
+
+            else -> {
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                super.onOptionsItemSelected(item)
+            }
+        }
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.add(R.id.section, sectionFragment, sectionFragment.tag)
+        fragmentTransaction.commit()
+
+        return true
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -51,7 +91,5 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnFragmentInteractionLis
 
         // Set default section
         navigation.selectedItemId = R.id.navigation_games
-
-
     }
 }

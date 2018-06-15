@@ -26,7 +26,7 @@
                 android:layout_height="42dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
-                android:src="@drawable/tably_logo"
+
                 app:civ_border_color="@color/green"
                 app:civ_border_width="2dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -55,7 +55,7 @@
                 android:layout_height="42dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginTop="32dp"
-                android:src="@drawable/tably_logo"
+
                 app:civ_border_color="@color/blueTeam"
                 app:civ_border_width="2dp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
@@ -70,7 +70,7 @@
                 android:layout_width="59dp"
                 android:layout_height="42dp"
                 android:layout_marginEnd="8dp"
-                android:src="@drawable/tably_logo"
+
                 app:civ_border_color="@color/redTeam"
                 app:civ_border_width="2dp"
                 app:layout_constraintBottom_toBottomOf="@+id/blue_attacker"
@@ -176,7 +176,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
-                android:src="@drawable/tably_logo"
+
                 app:civ_border_color="@color/blueTeam"
                 app:civ_border_width="2dp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
@@ -191,7 +191,7 @@
                 android:layout_height="42dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginTop="4dp"
-                android:src="@drawable/tably_logo"
+
                 app:civ_border_color="@color/redTeam"
                 app:civ_border_width="2dp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
